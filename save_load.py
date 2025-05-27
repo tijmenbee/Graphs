@@ -5,6 +5,8 @@ import os
 
 def load_graph(filename):
     dict_graph = defaultdict(list)
+    #dict_time = defaultdict(list)
+    #time = 0
     if not os.path.exists(f"{filename}.json"):
         print("Importing data...")
         with open("sx-stackoverflow-a2q.txt", "r") as file:
@@ -22,6 +24,7 @@ def load_graph(filename):
                     
                     a, b, c = map(int, parts)
                     dict_graph[c].append((a,b))
+                    #dict_time[progress] = (a,b)
                 progress += 1
                 if progress % int(line_count/100) == 0:
                     print(f"Import progress: {int(progress/line_count * 100)}%", end="\r")

@@ -1,7 +1,6 @@
 import networkx as nx
 
-def build_graph(dict): ### Build the graph from a dictionary
-    G = nx.Graph()
+def build_graph(dict, G = nx.Graph()): ### Build the graph from a dictionary
     print("Building Graph...")
     time_length = len(dict.keys())
     i = 0
@@ -15,7 +14,6 @@ def build_graph(dict): ### Build the graph from a dictionary
                 print(f"Building progress: {int(i/time_length * 100)}%", end="\r")
     print(f"Building progress: {100}%")
     return G
-
 
 def count_edges_between_communities(G, partition):
     community_edges = {}
