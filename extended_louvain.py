@@ -6,22 +6,24 @@ from itertools import islice
 from graph_functions import build_graph
 def extended_louvain(G, partition, new_data, time_step):
     start = 0
-    for i, pair in enumerate(new_data.values()):
-        pair = pair[0]
-        if pair[0] in partition and pair[1] in partition:
-            continue
-        elif pair[0] in partition and pair[1] not in partition:
-            partition[pair[1]] = partition[pair[0]]
-        elif pair[0] not in partition and pair[1] in partition:
-            partition[pair[0]] = partition[pair[1]]
-        else: #TODO
-            partition[pair[0]] = 0
-            partition[pair[1]] = 0
-            print("Both nodes are not in the partition")
+    for i, list in enumerate(new_data.values()):
+        for pair in list: # Usually 1, sometimes 2 entries
+            if pair[0] == 37151 or pair[1] == 37151:
+                print(pair[0] in partition and pair[1] in partition)
+            if pair[0] in partition and pair[1] in partition:
+                continue
+            elif pair[0] in partition and pair[1] not in partition:
+                partition[pair[1]] = partition[pair[0]]
+            elif pair[0] not in partition and pair[1] in partition:
+                partition[pair[0]] = partition[pair[1]]
+            else: #TODO
+                partition[pair[0]] = 0
+                partition[pair[1]] = 0
+                #print("Both nodes are not in the partition")
 
 
         if i % time_step == -1:
-            print(i)
+            print("test",i)
             truncated_dict = dict(islice(new_data.items(),start,i))
             start = i
             G = build_graph(truncated_dict,G)
@@ -35,8 +37,7 @@ def extended_louvain(G, partition, new_data, time_step):
                 print(community)
                 draw_community_graph(Gnew,partition[community])
     
-
-    return partition
+    return partition, G
 
 
 def get_community_edges(G, partition):

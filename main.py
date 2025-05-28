@@ -58,11 +58,13 @@ def merge_weak_communities(G, partition, threshold, seed=None):
             new_partition[node] = target_comm
 
         # Reassign all nodes from comm to target_comm
-    
-    new_partition = {k: v for k, v in new_partition.items() if v not in to_merge}
     for comm in to_merge:
-        if comm in new_partition.values():
-            print(comm)
+        for node, comm2 in new_partition.items():
+            if comm2 == comm:
+                
+                new_partition[node] = 0
+    new_partition = {k: v for k, v in new_partition.items() if v not in to_merge}
+   
     return new_partition
 
 
@@ -106,10 +108,18 @@ partition = merge_weak_communities(G,partition, 15)
 # Output the partition to see the communities
 draw_community_graph(G,partition)
 for i in range(1,time_steps+1):
+    print(f"Time Step: {i/time_steps}")
     truncated_dict = dict(islice(dict_graph.items(),start_length+step_size*(i-1), start_length+step_size*i))
     
-    partition = extended_louvain(G,partition, truncated_dict, step_size/10)
-    #partition = community_louvain.best_partition(G,partition, random_state=112543536)
-    partition = merge_weak_communities(G,partition, 15)
-    draw_community_graph(G,partition)
+    partition, G = extended_louvain(G,partition, truncated_dict, step_size/10)
+    G = build_graph(truncated_dict,G)
 
+
+
+    #partition = merge_weak_communities(G,partition, 15)
+draw_community_graph(G,partition)
+
+partition = community_louvain.best_partition(G,partition, random_state=112543536)
+
+partition = merge_weak_communities(G,partition, 15)
+draw_community_graph(G,partition)

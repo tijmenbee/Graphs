@@ -43,7 +43,6 @@ def draw_community_graph(G, partition):
     pos = nx.circular_layout(G_comm)
     plt.figure(figsize=(10, 8))
     nx.draw(G_comm, pos, node_size=node_sizes, with_labels=True, node_color="skyblue", font_weight="bold", font_size=10)
-    print("3test")
     # Draw edge labels (number of edges between communities)
     edge_labels = {(u, v): f"{(u,v)}:{G_comm[u][v]['weight']}" for u, v in G_comm.edges()}
     nx.draw_networkx_edge_labels(G_comm, pos, edge_labels=edge_labels)
