@@ -91,7 +91,7 @@ class Status(object):
             self.soft_nodes_set = set()
             ## @TODO: add check for nodes that are not in partition but where added to the graph later
             for node in graph.nodes():
-                com = part[node]
+                com = part.get(node, -1)
                 self.node2com[node] = com
                 deg = float(graph.degree(node, weight=weight))
                 self.degrees[com] = self.degrees.get(com, 0) + deg
