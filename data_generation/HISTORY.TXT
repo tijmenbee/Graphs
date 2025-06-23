@@ -1,0 +1,20 @@
+==============================================================
+Non-Overlapping Dynamic Data Benchmark Generator - Version History
+==============================================================
+
+Version:    2016-12-20
+-------------------------
+* Remove warnings, update documentation.
+
+Version:    2015-11-02
+-------------------------
+* Minor fixes for newer compilers, courtesy of Hamide Cheraghchi.
+
+Version:    2010-10-04
+-------------------------
+* Updated documentation, licensing.
+* Prevented edge case where orphan nodes may be generated.
+
+Version:    2010-03-15
+-------------------------
+* Initial internal version.
