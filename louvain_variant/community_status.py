@@ -63,11 +63,14 @@ class Status(object):
         """Initialize the status of a graph with every node in one community"""
         count = 0
         self.node2com = dict([])
+        self.node_new_arrival = dict([])
         self.total_weight = 0
         self.degrees = dict([])
         self.gdegrees = dict([])
         self.internals = dict([])
         self.total_weight = graph.size(weight=weight)
+        self.max_com_id = 0
+        self.weight = weight
 
         self.external_degrees = dict([])
         self.core_centrality = dict([])
@@ -77,6 +80,7 @@ class Status(object):
         if part is None:
             for node in graph.nodes():
                 self.node2com[node] = count
+                self.node_new_arrival[node] = True
                 deg = float(graph.degree(node, weight=weight))
                 if deg < 0:
                     error = "Bad node degree ({})".format(deg)
@@ -87,11 +91,25 @@ class Status(object):
                 self.loops[node] = float(edge_data.get(weight, 1))
                 self.internals[count] = self.loops[node]
                 count += 1
+            self.max_com_id = count
         else:
+            self.max_com_id = max(part.values()) + 1
             self.soft_nodes_set = set()
-            ## @TODO: add check for nodes that are not in partition but where added to the graph later
             for node in graph.nodes():
-                com = part[node]
+                if node not in part.keys():
+                    part[node] = self.max_com_id
+                    neighbours_new_node = [n for n in graph.neighbors(node)]
+                    for n in neighbours_new_node:
+                        self.soft_nodes_set |= set(graph.neighbors(n))
+
+                    self.max_com_id += 1
+                    self.soft_nodes_set |= set([node])
+                    self.node_new_arrival[node] = True
+                else:
+                    self.node_new_arrival[node] = False
+
+            for node in graph.nodes():
+                com = part.get(node)
                 self.node2com[node] = com
                 deg = float(graph.degree(node, weight=weight))
                 self.degrees[com] = self.degrees.get(com, 0) + deg
@@ -102,12 +120,6 @@ class Status(object):
                 core_centrality, external_degree = self._compute_core_centrality(neighbor_list, community_set)
                 self.external_degrees[node] = external_degree
                 self.core_centrality[node] = core_centrality
-
-                # if node == 23:
-                #     print(external_degree)
-                #     print(core_centrality)
-                #     print(neighbor_list)
-                #     print(community_set)
 
                 if core_centrality < self.core_threshold:
                     self.soft_nodes_set |= set([node])
@@ -124,5 +136,5 @@ class Status(object):
                         else:
                             inc += float(edge_weight) / 2.
                 self.internals[com] = self.internals.get(com, 0) + inc
-            # print(self.soft_nodes_set)
-            # print(self.core_centrality)
+
+        self.max_com_id = max(self.node2com.values())
